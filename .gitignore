@@ -1,0 +1,69 @@
+# フロントエンド
+
+# ログ
+frontend/logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# 依存パッケージ・ビルド成果物
+frontend/node_modules
+frontend/dist
+frontend/dist-ssr
+
+# 環境変数
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/*.local
+
+# バックエンド
+
+# ログ
+backend/*.log
+
+# 依存パッケージ
+backend/vendor
+backend/node_modules
+
+# 環境変数・認証
+backend/.env
+backend/.env.backup
+backend/.env.production
+backend/auth.json
+
+# ビルド・キャッシュ
+backend/public/build
+backend/public/hot
+backend/public/storage
+backend/storage/*.key
+backend/storage/pail
+
+# テスト
+backend/.phpunit.cache
+backend/.phpunit.result.cache
+
+# Laravel固有
+backend/Homestead.json
+backend/Homestead.yaml
+
+# 共通
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE/エディタ
+.vscode
+.idea
+.fleet
+.nova
+.zed
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+phpactor.json
