@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,6 +20,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'line_id',
+        'line_name',
+        'role',
+        'created_by',
+        'updated_by',
     ];
 
     /**
@@ -44,5 +48,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * 作成者を取得
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * 最終更新者を取得
+     */
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /**
+     * 管理者かどうか判定
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }
