@@ -2,9 +2,10 @@ import { useState } from 'react';
 
 import { GoogleMap, Marker , InfoWindow, useJsApiLoader } from '@react-google-maps/api';
 
+import MapLoading from '../../../common/components/MapLoading';
+
 import { DEFAULT_MAP_CENTER, PUBLIC_MAP_INITIAL_ZOOM } from '../../constants/mapConstants';
 import { POST_PLAN_POINT_MARKER_ICON } from '../../constants/markerIcons';
-import MapLoading from '../../../common/components/MapLoading';
 
 /**
  * 利用者画面用マップコンポーネント
@@ -12,7 +13,7 @@ import MapLoading from '../../../common/components/MapLoading';
  * - マーカー選択で InfoWindow 表示
  * - 地図クリックで投稿予定地点を選択し、親コンポーネントに通知
  * @param {Object} props
- * @param {{ id: string, animal_type: string, sighted_at: import('firebase/firestore').Timestamp, lat: number, lng: number, note: string }[]} props.markers - 目撃情報一覧
+ * @param {{ id: number, animal_type: Object, sighted_at: string, lat: number, lng: number, note: string }[]} props.markers - 目撃情報一覧
  * @param {(location: { lat: number, lng: number }) => void} props.onMapClick - 地図クリック時に選択した座標を親コンポーネントに通知
  * @param {{ lat: number, lng: number } | null} props.selectedLocation - 投稿予定地点を示す仮マーカーの座標
  * @returns {JSX.Element}
@@ -63,7 +64,7 @@ function Map({ markers, onMapClick, selectedLocation }) {
                         <Marker
                             key={index}
                             position={{ lat: marker.lat, lng: marker.lng }}
-                            title={marker.animal_type}
+                            title={marker.animal_type?.name}
                             onClick={() => setSelectedMarker(marker)}
                         />
                     ))}
@@ -82,8 +83,8 @@ function Map({ markers, onMapClick, selectedLocation }) {
                             onCloseClick={() => setSelectedMarker(null)}
                         >
                             <div style={{ maxWidth: '200px' }}>
-                                <h3>{selectedMarker.animal_type} の目撃</h3>
-                                <p><strong>日時:</strong><br />{selectedMarker.sighted_at?.toDate().toLocaleString()}</p>
+                                <h3>{selectedMarker.animal_type?.name} の目撃</h3>
+                                <p><strong>日時:</strong><br />{new Date(selectedMarker.sighted_at).toLocaleString()}</p>
                                 <p><strong>詳細:</strong><br />{selectedMarker.note}</p>
                             </div>
                         </InfoWindow>

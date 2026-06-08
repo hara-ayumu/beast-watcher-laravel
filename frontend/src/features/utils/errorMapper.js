@@ -4,53 +4,43 @@ import { ERROR_CODES } from '../sightings/constants/errorCodes';
 import { ERROR_MESSAGES } from '../sightings/constants/errorMessages';
 
 /**
- * Firebase エラーを解析してユーザー向けのメッセージに変換
- * @param {Error} error - Firebase から投げられたエラー
+ * API エラーレスポンスからメッセージを取得
+ * @param {Error} error - axios から投げられたエラー
  * @returns {string} - ユーザー向けメッセージ
  */
-const parseFirebaseError = (error) => {
-    if (!error || !error.code) {
+const parseApiError = (error) => {
+    const response = error?.response;
+    if (!response) {
         return ERROR_MESSAGES[ERROR_CODES.UNKNOWN_ERROR];
     }
 
-    const errorCode = error.code;
+    // LaravelのバリデーションエラーはHTTP 422で返る
+    if (response.status === 422 && response.data?.errors) {
+        const firstField = Object.keys(response.data.errors)[0];
+        return response.data.errors[firstField][0];
+    }
 
-    // Firestore セキュリティルール関連のエラー
-    const firestoreErrors = {
-        'permission-denied': 'アクセス権限がありません。',
-        'unauthenticated': 'ログインが必要です。',
-        'not-found': 'データが見つかりませんでした。',
-        'already-exists': 'データが既に存在します。',
-        'resource-exhausted': 'リクエスト制限を超えました。時間をおいて再度お試しください。',
-        'failed-precondition': 'データの整合性チェックに失敗しました。',
-        'aborted': '処理が中断されました。再度お試しください。',
-        'out-of-range': '入力値が範囲外です。',
-        'internal': 'サーバー内部エラーが発生しました。',
-        'unavailable': 'サービスが一時的に利用できません。',
-        'deadline-exceeded': 'タイムアウトしました。再度お試しください。',
+    // Laravelのエラーメッセージ
+    if (response.data?.message) {
+        return response.data.message;
+    }
+
+    // ステータスコード別
+    const statusMessages = {
+        401: 'ログインが必要です。',
+        403: 'アクセス権限がありません。',
+        404: 'データが見つかりませんでした。',
+        429: 'リクエスト制限を超えました。時間をおいて再度お試しください。',
+        500: 'サーバー内部エラーが発生しました。',
     };
-
-    // Authentication 関連のエラー
-    const authErrors = {
-        'auth/invalid-email': 'メールアドレスの形式が正しくありません。',
-        'auth/user-disabled': 'このアカウントは無効化されています。',
-        'auth/user-not-found': 'ユーザーが見つかりません。',
-        'auth/wrong-password': 'パスワードが正しくありません。',
-        'auth/email-already-in-use': 'このメールアドレスは既に使用されています。',
-        'auth/weak-password': 'パスワードが弱すぎます。',
-    };
-
-    const message = firestoreErrors[errorCode] || 
-                    authErrors[errorCode] || 
-                    ERROR_MESSAGES[ERROR_CODES.UNKNOWN_ERROR];
 
     // 開発環境でのみログ出力
     const isDev = import.meta.env.VITE_APP_ENV === 'development';
-    if (isDev && !firestoreErrors[errorCode] && !authErrors[errorCode]) {
-        console.warn('未知のFirebaseエラー:', errorCode, error.message);
+    if (isDev && !statusMessages[response.status]) {
+        console.warn('未知のAPIエラー:', response.status, response.data);
     }
 
-    return message;
+    return statusMessages[response.status] || ERROR_MESSAGES[ERROR_CODES.UNKNOWN_ERROR];
 };
 
 /**
@@ -64,12 +54,12 @@ export const mapErrorToUiMessage = (err) => {
         return err.message;
     }
 
-    // ServiceError: 内部にラップされた元エラー（SDK由来等）があればそちらを解析
+    // ServiceError: 内部にラップされた元エラー（API由来等）があればそちらを解析
     if (err instanceof ServiceError) {
-        if (err.originalError && err.originalError.code) {
-            const firebaseMessage = parseFirebaseError(err.originalError);
-            if (firebaseMessage !== ERROR_MESSAGES[ERROR_CODES.UNKNOWN_ERROR]) {
-                return firebaseMessage;
+        if (err.originalError) {
+            const apiMessage = parseApiError(err.originalError);
+            if (apiMessage !== ERROR_MESSAGES[ERROR_CODES.UNKNOWN_ERROR]) {
+                return apiMessage;
             }
         }
 
@@ -81,14 +71,11 @@ export const mapErrorToUiMessage = (err) => {
         return err;
     }
 
-    // 外部SDKエラー（Firebase等）が直接渡された場合の処理
-    if (err && typeof err === 'object' && err.code) {
-        const firebaseMessage = parseFirebaseError(err);
-        if (firebaseMessage !== ERROR_MESSAGES[ERROR_CODES.UNKNOWN_ERROR]) {
-            return firebaseMessage;
-        }
-        if (ERROR_MESSAGES[err.code]) {
-            return ERROR_MESSAGES[err.code];
+    // axiosエラーが直接渡された場合の処理
+    if (err && typeof err === 'object' && err.response) {
+        const apiMessage = parseApiError(err);
+        if (apiMessage !== ERROR_MESSAGES[ERROR_CODES.UNKNOWN_ERROR]) {
+            return apiMessage;
         }
     }
 
@@ -110,7 +97,7 @@ export const getValidationDetails = (err) => {
     if (err instanceof ValidationError) {
         return {
             field: err.field,
-            errors: err.errors
+            errors: err.errors,
         };
     }
     return null;

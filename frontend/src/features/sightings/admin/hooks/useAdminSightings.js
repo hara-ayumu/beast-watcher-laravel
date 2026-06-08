@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import { fetchAllSightings, reviewSighting } from '../../services/sightingsService';
 import { mapErrorToUiMessage } from '../../../utils/errorMapper';
 import { SIGHTING_STATUS } from '../../constants/sightingStatus';
@@ -39,18 +39,16 @@ export const useAdminSightings = () => {
      * @param {Object} reviewData - レビューデータ
      * @param {'approved'|'rejected'} reviewData.status - 変更後のステータス
      * @param {string} reviewData.reviewComment - レビューコメント（却下時は空でない文字列、承認時は空文字列も可）
-     * @param {Object} reviewData.reviewedBy - レビュー実行者情報
-     * @param {string} reviewData.reviewedBy.uid - 実行者のUID
      * @returns {Promise<{success: boolean, error?: string}>}
      */
     const submitReview = async (id, reviewData) => {
-        const { status, reviewComment, reviewedBy } = reviewData;
+        const { status, reviewComment } = reviewData;
 
         // 却下時のバリデーション
         if (status === SIGHTING_STATUS.REJECTED && !reviewComment?.trim()) {
             return {
                 success: false,
-                error: '却下理由を入力してください。'
+                error: '却下理由を入力してください。',
             };
         }
 
@@ -61,7 +59,6 @@ export const useAdminSightings = () => {
             await reviewSighting(id, {
                 status,
                 review_comment: reviewComment,
-                reviewed_by: reviewedBy.uid,
             });
             setPosts((prev) => 
                 prev.map((p) =>

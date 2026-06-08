@@ -60,7 +60,7 @@ function AdminMap({posts, selectedPost, setSelectedPost, onApprove, onReject, ma
                             key={post.id}
                             position={{ lat: post.lat, lng: post.lng }}
                             icon={{ url: STATUS_MARKER_ICONS[post.status] }}
-                            title={post.animal_type}
+                            title={post.animal_type?.name}
                             onClick={() => setSelectedPost(post)}
                         />
                     ))}
@@ -71,7 +71,7 @@ function AdminMap({posts, selectedPost, setSelectedPost, onApprove, onReject, ma
                             onCloseClick={() => setSelectedPost(null)}
                         >
                             <div style={{ maxWidth: '200px' }}>
-                                <h3>{selectedPost.animal_type} の目撃</h3>
+                                <h3>{selectedPost.animal_type?.name} の目撃</h3>
                                 <p><strong>日時:</strong><br />{selectedPost.sighted_at}</p>
                                 <p><strong>詳細:</strong><br />{selectedPost.note}</p>
                                 <PostActionButtons

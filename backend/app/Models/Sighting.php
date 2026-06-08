@@ -28,8 +28,8 @@ class Sighting extends Model
         return [
             'sighted_at' => 'datetime',
             'reviewed_at' => 'datetime',
-            'lat' => 'decimal:8',
-            'lng' => 'decimal:8',
+            'lat' => 'float',
+            'lng' => 'float',
         ];
     }
 

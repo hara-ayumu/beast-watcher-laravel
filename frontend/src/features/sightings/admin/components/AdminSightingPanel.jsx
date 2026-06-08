@@ -11,7 +11,7 @@ import PostActionButtons from './PostActionButtons';
 import ReviewConfirmModal from './ReviewConfirmModal';
 
 import { useAdminSightings } from '../hooks/useAdminSightings';
-import { useAuth } from '../../../auth/hooks/useAuth';
+
 import { DEFAULT_MAP_CENTER } from '../../constants/mapConstants';
 import { SIGHTING_STATUS } from '../../constants/sightingStatus';
 import { ERROR_MESSAGES } from '../../constants/errorMessages';
@@ -38,14 +38,14 @@ function AdminSightingPanel() {
     const [ isReviewModalOpen, setIsReviewModalOpen ] = useState(false);
 
     const { posts, initialLoading, updating, error, loadPosts, submitReview } = useAdminSightings();
-    const { user } = useAuth();
 
     // タブに応じてフィルタ
     const filteredPosts = posts
         .filter((post) => post.status === activeTab)
         .map((post) => ({
             ...post,
-            sighted_at: post.sighted_at ? post.sighted_at.toDate().toLocaleString() : '',
+            animal_type_name: post.animal_type?.name ?? '',
+            sighted_at: post.sighted_at ? new Date(post.sighted_at).toLocaleString() : '',
         }));
 
     // タブ切り替え時に InfoWindow を閉じる
@@ -68,7 +68,6 @@ function AdminSightingPanel() {
         const res = await submitReview(reviewPost.id, {
             status,
             reviewComment,
-            reviewedBy: user,
         });
         // 投稿ステータス変更に失敗した場合トーストでエラーを表示
         if (!res.success) {
@@ -104,7 +103,7 @@ function AdminSightingPanel() {
 
     // DataGridに渡すカラム
     const columns = [
-        { key: 'animal_type', label: '種類' },
+        { key: 'animal_type_name', label: '種類' },
         { key: 'sighted_at', label: '目撃日時' },
         { key: 'note', label: '詳細' },
         { key: 'review_comment', label: '判定理由' },

@@ -23,7 +23,7 @@ import { ERROR_CODES } from '../../constants/errorCodes';
  * @returns {JSX.Element}
  */
 function AddSightingForm({ selectedLocation, onSubmit }) {
-    const [ animal_type, setAnimalType ] = useState('');
+    const [ animal_type_id, setAnimalTypeId ] = useState('');
     const [ sighted_at, setSightedAt ] = useState('');
     const [ note, setNote ] = useState('');
     const [ errors, setErrors ] = useState({});
@@ -35,7 +35,7 @@ function AddSightingForm({ selectedLocation, onSubmit }) {
         setErrors({});
 
         const postData = {
-            animal_type,
+            animal_type_id: Number(animal_type_id),
             sighted_at: new Date(sighted_at),
             note,
             lat: selectedLocation.lat,
@@ -54,7 +54,7 @@ function AddSightingForm({ selectedLocation, onSubmit }) {
         if (result.success) {
             // 成功時トースト表示
             toast.success('投稿が送信されました。（承認待ち）');
-            setAnimalType('');
+            setAnimalTypeId('');
             setSightedAt('');
             setNote('');
             onSubmit?.();
@@ -71,10 +71,10 @@ function AddSightingForm({ selectedLocation, onSubmit }) {
                 種類：
                 <select
                     className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent ${
-                        errors.animal_type ? 'border-red-500' : 'border-gray-300'
+                        errors.animal_type_id ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    value={animal_type}
-                    onChange={(e) => setAnimalType(e.target.value)}
+                    value={animal_type_id}
+                    onChange={(e) => setAnimalTypeId(e.target.value)}
                     required
                 >
                     <option value="">-- 選択してください --</option>
@@ -84,8 +84,8 @@ function AddSightingForm({ selectedLocation, onSubmit }) {
                         </option>
                     ))}
                 </select>
-                {errors.animal_type && (
-                    <p className="text-red-500 text-xs mt-1">{errors.animal_type}</p>
+                {errors.animal_type_id && (
+                    <p className="text-red-500 text-xs mt-1">{errors.animal_type_id}</p>
                 )}
             </label>
 

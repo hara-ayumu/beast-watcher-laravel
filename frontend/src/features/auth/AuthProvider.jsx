@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { onAuthStateChanged } from 'firebase/auth';
-
-import { auth } from './firebase'
+import api from '../utils/api';
 
 import { AuthContext } from './context/AuthContext';
 
@@ -11,15 +9,38 @@ export function AuthProvider({ children }) {
     const [ authReady, setAuthReady ] = useState(false);
 
     useEffect(() => {
-        const unsub = onAuthStateChanged(auth, (user) => {
-            setUser(user);
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
             setAuthReady(true);
-        })
-        return () => unsub();
+            return;
+        }
+
+        api.get('/me')
+            .then((res) => setUser(res.data))
+            .catch(() => {
+                localStorage.removeItem('auth_token');
+            })
+            .finally(() => setAuthReady(true));
+    }, []);
+
+    const login = useCallback(async (email, password) => {
+        const response = await api.post('/login', { email, password });
+        localStorage.setItem('auth_token', response.data.token);
+        setUser(response.data.user);
+    }, []);
+
+    const logout = useCallback(async () => {
+        try {
+            await api.post('/logout');
+        }
+        finally {
+            localStorage.removeItem('auth_token');
+            setUser(null);
+        }
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, authReady }}>
+        <AuthContext.Provider value={{ user, authReady, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

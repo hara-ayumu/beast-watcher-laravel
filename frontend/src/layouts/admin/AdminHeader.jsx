@@ -1,11 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 
-import { signOut } from 'firebase/auth';
-import { FirebaseError } from 'firebase/app';
-
-import { auth } from '../../features/auth/firebase';
 import HeaderBase from '../HeaderBase';
 import HeaderButtonLink from '../HeaderButtonLink';
+
+import { useAuth } from '../../features/auth/hooks/useAuth';
 
 /**
  * 管理者画面ヘッダー
@@ -15,16 +13,15 @@ import HeaderButtonLink from '../HeaderButtonLink';
  */
 function AdminHeader() {
     const navigate = useNavigate();
+    const { logout } = useAuth();
 
     const handleLogout = async () => {
         try {
-            await signOut(auth);
+            await logout();
             navigate('/login');
         }
         catch (err) {
-            if (err instanceof FirebaseError) {
-                console.log(err);
-            }
+            console.log(err);
         }
     };
 

@@ -1,14 +1,13 @@
-import { ValidationError } from '../../../errors/ValidationError';
 import { SIGHTING_TYPE_OPTIONS } from '../constants/sightingTypes';
 import { VALIDATION_CONSTANTS, VALIDATION_MESSAGES } from '../constants/validationConstants';
 
 const rules = {
-    animal_type: (value) => {
-        if (!value) {
+    animal_type_id: (value) => {
+        if (!value && value !== 0) {
             return null;
         }
-        const allowedTypes = SIGHTING_TYPE_OPTIONS.map(opt => opt.value);
-        return allowedTypes.includes(value) ? null : VALIDATION_MESSAGES.ANIMAL_TYPE_INVALID;
+        const allowedIds = SIGHTING_TYPE_OPTIONS.map(opt => opt.value);
+        return allowedIds.includes(Number(value)) ? null : VALIDATION_MESSAGES.ANIMAL_TYPE_INVALID;
     },
 
     sighted_at: (value) => {
@@ -17,14 +16,14 @@ const rules = {
         }
         const sightedDate = value instanceof Date ? value : new Date(value);
         if (isNaN(sightedDate.getTime())) {
-            return VALIDATION_MESSAGES.SIGHTED_AT_INVALID
-        };
+            return VALIDATION_MESSAGES.SIGHTED_AT_INVALID;
+        }
 
         // 未来の日時チェック
         const now = new Date();
         if (sightedDate > now) {
-            return VALIDATION_MESSAGES.SIGHTED_AT_FUTURE
-        };
+            return VALIDATION_MESSAGES.SIGHTED_AT_FUTURE;
+        }
 
         // 既定の年数より前の日時かチェック
         const minDate = new Date();
@@ -37,44 +36,44 @@ const rules = {
 
     location: (lat, lng) => {
         if (lat === undefined || lat === null || lng === undefined || lng === null) {
-            return null
-        };
+            return null;
+        }
         
         // 緯度経度の型が数値かチェック
         if (typeof lat !== 'number' || typeof lng !== 'number') {
-            return VALIDATION_MESSAGES.LOCATION_INVALID
-        };
+            return VALIDATION_MESSAGES.LOCATION_INVALID;
+        }
 
         // 緯度経度の異常値をチェック
         if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-            return VALIDATION_MESSAGES.LOCATION_INVALID
-        };
+            return VALIDATION_MESSAGES.LOCATION_INVALID;
+        }
         return null;
     },
 
     note: (value) => {
         if (!value) {
-            return null
-        };
+            return null;
+        }
         // 詳細の文字数チェック
         if (value.length > VALIDATION_CONSTANTS.MAX_NOTE_LENGTH) {
             return VALIDATION_MESSAGES.NOTE_TOO_LONG(VALIDATION_CONSTANTS.MAX_NOTE_LENGTH, value.length);
         }
         return null;
-    }
+    },
 };
 
 export const validateForCreate = (data) => {
     const errors = {};
 
     // 動物種未選択の場合
-    if (!data.animal_type) {
-        errors.animal_type = VALIDATION_MESSAGES.ANIMAL_TYPE_REQUIRED;
+    if (!data.animal_type_id) {
+        errors.animal_type_id = VALIDATION_MESSAGES.ANIMAL_TYPE_REQUIRED;
     }
     else {
-        const err = rules.animal_type(data.animal_type);
+        const err = rules.animal_type_id(data.animal_type_id);
         if (err) {
-            errors.animal_type = err;
+            errors.animal_type_id = err;
         }
     }
 
@@ -85,8 +84,8 @@ export const validateForCreate = (data) => {
     else {
         const err = rules.sighted_at(data.sighted_at);
         if (err) {
-            errors.sighted_at = err
-        };
+            errors.sighted_at = err;
+        }
     }
 
     // 投稿予定地点未選択の場合
@@ -96,14 +95,14 @@ export const validateForCreate = (data) => {
     else {
         const err = rules.location(data.lat, data.lng);
         if (err) {
-            errors.location = err
-        };
+            errors.location = err;
+        }
     }
 
     const noteErr = rules.note(data.note);
     if (noteErr) {
-        errors.note = noteErr
-    };
+        errors.note = noteErr;
+    }
 
     return { isValid: Object.keys(errors).length === 0, errors };
 };
@@ -111,13 +110,15 @@ export const validateForCreate = (data) => {
 export const validateForUpdate = (patch) => {
     const errors = {};
 
-    if ('animal_type' in patch) {
-        if (!patch.animal_type) {
-            errors.animal_type = VALIDATION_MESSAGES.ANIMAL_TYPE_REQUIRED;
+    if ('animal_type_id' in patch) {
+        if (!patch.animal_type_id) {
+            errors.animal_type_id = VALIDATION_MESSAGES.ANIMAL_TYPE_REQUIRED;
         }
         else {
-            const err = rules.animal_type(patch.animal_type);
-            if (err) errors.animal_type = err;
+            const err = rules.animal_type_id(patch.animal_type_id);
+            if (err) {
+                errors.animal_type_id = err;
+            }
         }
     }
 
@@ -153,34 +154,4 @@ export const validateForUpdate = (patch) => {
     }
 
     return { isValid: Object.keys(errors).length === 0, errors };
-};
-
-/**
- * 新規投稿のバリデーションを実行し、エラーがあれば ValidationError を投げる
- * @param {Object} data - バリデーション対象のデータ
- * @throws {ValidationError} バリデーションエラーがある場合
- */
-export const validateCreateOrThrow = (data) => {
-    const { isValid, errors } = validateForCreate(data);
-
-    if (!isValid) {
-        const firstErrorKey = Object.keys(errors)[0];
-        const firstErrorMessage = Object.values(errors)[0];
-        throw new ValidationError(firstErrorMessage, firstErrorKey, errors);
-    }
-};
-
-/**
- * 投稿更新のバリデーションを実行し、エラーがあれば ValidationError を投げる
- * @param {Object} patch - バリデーション対象のデータ
- * @throws {ValidationError} バリデーションエラーがある場合
- */
-export const validateUpdateOrThrow = (patch) => {
-    const { isValid, errors } = validateForUpdate(patch);
-
-    if (!isValid) {
-        const firstErrorKey = Object.keys(errors)[0];
-        const firstErrorMessage = Object.values(errors)[0];
-        throw new ValidationError(firstErrorMessage, firstErrorKey, errors);
-    }
 };

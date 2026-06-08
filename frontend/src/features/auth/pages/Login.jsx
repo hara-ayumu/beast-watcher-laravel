@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-import { signInWithEmailAndPassword } from 'firebase/auth';
-
-import { auth } from '../firebase';
+import { useAuth } from '../hooks/useAuth';
 
 const DEMO_EMAIL = 'bf-admin@example.com';
 const DEMO_PASSWORD = 'admin1234';
@@ -19,10 +17,12 @@ function Login() {
     const [ password, setPassword ] = useState('');
     const [ error, setError ] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
-    const login = async (email, password) => {
+    const executeLogin = async (email, password) => {
+        setError(false);
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await login(email, password);
             navigate('/admin');
         }
         catch {
@@ -32,11 +32,11 @@ function Login() {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        login(email, password);
+        executeLogin(email, password);
     };
 
     const handleDemoLogin = () => {
-        login(DEMO_EMAIL, DEMO_PASSWORD);
+        executeLogin(DEMO_EMAIL, DEMO_PASSWORD);
     };
 
     return (

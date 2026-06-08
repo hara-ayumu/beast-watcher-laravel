@@ -52,7 +52,7 @@ function ReviewConfirmModal({ isOpen, post, nextStatus, onSubmit, onCancel }) {
 
             <div className="mb-3">
                 <p className="text-sm text-gray-600 mb-2">
-                    <strong>種類:</strong> {post.animal_type}
+                    <strong>種類:</strong> {post.animal_type?.name}
                 </p>
                 <p className="text-sm text-gray-600 mb-2">
                     <strong>目撃日時:</strong> {post.sighted_at}
