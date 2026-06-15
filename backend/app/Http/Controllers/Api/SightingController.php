@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSightingRequest;
+use App\Http\Requests\UpdateSightingRequest;
 use App\Http\Requests\ReviewSightingRequest;
 use App\Models\Sighting;
 
@@ -49,6 +50,18 @@ class SightingController extends Controller
             ->get();
 
         return response()->json($sightings);
+    }
+
+    /**
+     * 目撃情報を更新
+     */
+    public function update(UpdateSightingRequest $request, Sighting $sighting)
+    {
+        $sighting->update($request->validated());
+
+        $sighting->load('animalType');
+
+        return response()->json($sighting);
     }
 
     /**

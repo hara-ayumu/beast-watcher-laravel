@@ -14,5 +14,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
 
     Route::get('/admin/sightings', [SightingController::class, 'adminIndex']);
+    Route::patch('/admin/sightings/{sighting}', [SightingController::class, 'update']);
     Route::patch('/admin/sightings/{sighting}/review', [SightingController::class, 'review']);
 });
