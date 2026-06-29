@@ -103,10 +103,10 @@ function AdminSightingPanel() {
 
     // DataGridに渡すカラム
     const columns = [
-        { key: 'animal_type_name', label: '種類' },
-        { key: 'sighted_at', label: '目撃日時' },
-        { key: 'note', label: '詳細' },
-        { key: 'review_comment', label: '判定理由' },
+        { accessorKey: 'animal_type_name', header: '種類' },
+        { accessorKey: 'sighted_at', header: '目撃日時' },
+        { accessorKey: 'note', header: '詳細' },
+        { accessorKey: 'review_comment', header: '判定理由' },
     ];
 
     useEffect(() => {
