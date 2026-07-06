@@ -45,7 +45,6 @@ function AdminSightingPanel() {
         .map((post) => ({
             ...post,
             animal_type_name: post.animal_type?.name ?? '',
-            sighted_at: post.sighted_at ? new Date(post.sighted_at).toLocaleString() : '',
         }));
 
     // タブ切り替え時に InfoWindow を閉じる
@@ -103,10 +102,10 @@ function AdminSightingPanel() {
 
     // DataGridに渡すカラム
     const columns = [
-        { key: 'animal_type_name', label: '種類' },
-        { key: 'sighted_at', label: '目撃日時' },
-        { key: 'note', label: '詳細' },
-        { key: 'review_comment', label: '判定理由' },
+        { accessorKey: 'animal_type_id', header: '種類', cell: (info) => info.row.original.animal_type_name },
+        { accessorKey: 'sighted_at', header: '目撃日時', cell: (info) => info.getValue() ? new Date(info.getValue()).toLocaleString() : '' },
+        { accessorKey: 'note', header: '詳細' },
+        { accessorKey: 'review_comment', header: '判定理由' },
     ];
 
     useEffect(() => {

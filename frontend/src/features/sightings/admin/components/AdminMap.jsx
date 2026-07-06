@@ -33,7 +33,7 @@ function AdminMap({posts, selectedPost, setSelectedPost, onApprove, onReject, ma
         },
     });
 
-    return(
+    return (
         <div className="relative w-full h-full">
             {/* 地図読み込み中のオーバーレイ */}
             {!isLoaded && <MapLoading />}
@@ -72,7 +72,7 @@ function AdminMap({posts, selectedPost, setSelectedPost, onApprove, onReject, ma
                         >
                             <div style={{ maxWidth: '200px' }}>
                                 <h3>{selectedPost.animal_type?.name} の目撃</h3>
-                                <p><strong>日時:</strong><br />{selectedPost.sighted_at}</p>
+                                <p><strong>日時:</strong><br />{selectedPost.sighted_at ? new Date(selectedPost.sighted_at).toLocaleString() : ''}</p>
                                 <p><strong>詳細:</strong><br />{selectedPost.note}</p>
                                 <PostActionButtons
                                     status={selectedPost.status}
