@@ -9,6 +9,7 @@ import Map from '../features/sightings/public/components/Map';
 import AddSightingModal from '../features/sightings/public/components/AddSightingModal';
 import InfoModal from '../features/sightings/public/components/InfoModal';
 
+import { useAuth } from '../features/auth/hooks/useAuth';
 import { usePublicSightings } from '../features/sightings/public/hooks/usePublicSightings';
 
 const TERMS_AGREED_KEY = 'bw_terms_agreed';
@@ -27,6 +28,8 @@ function Home() {
     const [ isTermsModalOpen, setIsTermsModalOpen ] = useState(false);
     const [ isPostingGuideModalOpen, setIsPostingGuideModalOpen ] = useState(false);
     const [ isFirstVisit, setIsFirstVisit ] = useState(false);
+
+    const { user } = useAuth();
 
     const { posts: markers, loading, error, loadPosts } = usePublicSightings();
 
@@ -126,12 +129,21 @@ function Home() {
                     {/* 投稿予定地点選択後のみ表示されるボタン */}
                     {selectedLocation && !isSightingFormOpen && (
                         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                            <button
-                                className="px-6 py-3 bg-orange-500 text-white rounded-full shadow-lg"
-                                onClick={() => setIsSightingFormOpen(true)}
-                            >
-                                この場所の目撃情報を投稿
-                            </button>
+                            {user ? (
+                                <button
+                                    className="px-6 py-3 bg-orange-500 text-white rounded-full shadow-lg"
+                                    onClick={() => setIsSightingFormOpen(true)}
+                                >
+                                    この場所の目撃情報を投稿
+                                </button>
+                            ) : (
+                                <a
+                                    href={`${import.meta.env.VITE_API_URL}/auth/line/redirect`}
+                                    className="px-6 py-3 bg-[#06C755] text-white rounded-full shadow-lg inline-block"
+                                >
+                                    LINEでログインして投稿
+                                </a>
+                            )}
                         </div>
                     )}
                 </div>

@@ -35,6 +35,7 @@ class SightingController extends Controller
             'lng' => $request->lng,
             'note' => $request->note,
             'status' => 'pending',
+            'created_by' => $request->user()->id,
         ]);
 
         return response()->json($sighting, 201);

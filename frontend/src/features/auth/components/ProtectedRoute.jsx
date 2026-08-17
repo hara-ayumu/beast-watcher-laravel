@@ -16,6 +16,9 @@ function ProtectedRoute({ children }) {
     // 未ログインならログイン画面へ
     if (!user) return <Navigate to="/login" />;
 
+    // 管理者でなければトップページへ
+    if (user.role !== 'admin') return <Navigate to="/" />;
+
     // ログイン済みなら管理画面を表示
     return children;
 }

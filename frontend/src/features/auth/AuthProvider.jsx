@@ -39,8 +39,13 @@ export function AuthProvider({ children }) {
         }
     }, []);
 
+    const setAuthFromCallback = useCallback((token, userData) => {
+        localStorage.setItem('auth_token', token);
+        setUser(userData);
+    }, []);
+
     return (
-        <AuthContext.Provider value={{ user, authReady, login, logout }}>
+        <AuthContext.Provider value={{ user, authReady, login, logout, setAuthFromCallback }}>
             {children}
         </AuthContext.Provider>
     );
