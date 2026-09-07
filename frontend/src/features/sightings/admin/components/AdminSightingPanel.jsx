@@ -9,6 +9,7 @@ import Tabs from '../../../../components/Tabs';
 import DataGrid from '../../../../components/DataGrid';
 import PostActionButtons from './PostActionButtons';
 import ReviewConfirmModal from './ReviewConfirmModal';
+import EditSightingModal from './EditSightingModal';
 
 import { useAdminSightings } from '../hooks/useAdminSightings';
 
@@ -36,8 +37,10 @@ function AdminSightingPanel() {
     const [ reviewPost, setReviewPost ] = useState(null);
     const [ nextStatus, setNextStatus ] = useState(null);
     const [ isReviewModalOpen, setIsReviewModalOpen ] = useState(false);
+    const [ editPost, setEditPost ] = useState(null);
+    const [ isEditModalOpen, setIsEditModalOpen ] = useState(false);
 
-    const { posts, initialLoading, updating, error, loadPosts, submitReview } = useAdminSightings();
+    const { posts, initialLoading, updating, error, loadPosts, submitReview, updatePost } = useAdminSightings();
 
     // タブに応じてフィルタ
     const filteredPosts = posts
@@ -86,6 +89,35 @@ function AdminSightingPanel() {
         setReviewPost(post);
         setNextStatus(status);
         setIsReviewModalOpen(true)
+    };
+
+    /**
+     * 編集確定時の処理を行う
+     * - 投稿内容を更新する
+     * - 成功/失敗に応じてトーストで通知
+     * - 処理完了後に編集用モーダルを閉じる
+     * @param {Object} patch - 更新する投稿の内容
+     * @param {number} patch.animal_type_id - 動物の種類ID
+     * @param {string} patch.sighted_at - 目撃日時
+     * @param {string} patch.note - 詳細
+     * @returns {Promise<void>}
+     */
+    const handleSubmitEdit = async (patch) => {
+        const res = await updatePost(editPost.id, patch);
+        // 投稿ステータス変更に失敗した場合トーストでエラーを表示
+        if (!res.success) {
+            // 複数回同じ操作をした場合に毎回エラーメッセージが出るようにユニークIDを付与
+            toast.error(res.error || ERROR_MESSAGES[ERROR_CODES.UPDATE_SIGHTING_FAILED], { id: `admin-edit-error-${Date.now()}` });
+        } else {
+            toast.success('投稿を更新しました。');
+        }
+        setEditPost(null);
+        setIsEditModalOpen(false);
+    };
+
+    const openEditModal = (post) => {
+        setEditPost(post);
+        setIsEditModalOpen(true);
     };
 
     /**
@@ -204,6 +236,7 @@ function AdminSightingPanel() {
                                 status={row.status}
                                 onApprove={() => openReviewModal(row, SIGHTING_STATUS.APPROVED)}
                                 onReject={() => openReviewModal(row, SIGHTING_STATUS.REJECTED)}
+                                onEdit={() => openEditModal(row)}
                             />
                         )}
                     />
@@ -219,6 +252,16 @@ function AdminSightingPanel() {
                     setReviewPost(null);
                     setNextStatus(null);
                     setIsReviewModalOpen(false);
+                }}
+            />
+
+            <EditSightingModal
+                isOpen={isEditModalOpen}
+                post={editPost}
+                onSubmit={handleSubmitEdit}
+                onCancel={() => {
+                    setEditPost(null);
+                    setIsEditModalOpen(false);
                 }}
             />
         </div>

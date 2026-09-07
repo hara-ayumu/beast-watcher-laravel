@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LineAuthController;
 use App\Http\Controllers\Api\SightingController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/sightings', [SightingController::class, 'index']);
@@ -24,5 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/admin/sightings', [SightingController::class, 'adminIndex']);
         Route::patch('/admin/sightings/{sighting}', [SightingController::class, 'update']);
         Route::patch('/admin/sightings/{sighting}/review', [SightingController::class, 'review']);
+
+        Route::get('/admin/users', [UserController::class, 'index']);
     });
 });

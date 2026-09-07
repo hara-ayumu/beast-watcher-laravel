@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchAllSightings, reviewSighting } from '../../services/sightingsService';
+import { fetchAllSightings, reviewSighting, updateSighting } from '../../services/sightingsService';
 import { mapErrorToUiMessage } from '../../../utils/errorMapper';
 import { SIGHTING_STATUS } from '../../constants/sightingStatus';
 
@@ -77,6 +77,33 @@ export const useAdminSightings = () => {
         }
     };
 
+    /**
+     * 投稿を更新する
+     * @param {number} id - 投稿ID
+     * @param {Object} patch - 更新するフィールド
+     * @returns {Promise<{success: boolean, error?: string}>}
+     */
+    const updatePost = async (id, patch) => {
+        setUpdating(true);
+        setError(null);
+
+        try {
+            const updated = await updateSighting(id, patch);
+            setPosts((prev) =>
+                prev.map((p) => p.id === id ? { ...updated } : p)
+            );
+            return { success: true };
+        }
+        catch (err) {
+            const message = mapErrorToUiMessage(err);
+            setError(message);
+            return { success: false, error: message };
+        }
+        finally {
+            setUpdating(false);
+        }
+    };
+
     useEffect(() => {
         loadPosts();
     }, []);
@@ -87,6 +114,7 @@ export const useAdminSightings = () => {
         updating,
         error,
         loadPosts,
-        submitReview
+        submitReview,
+        updatePost,
     };
 };
