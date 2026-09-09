@@ -138,10 +138,10 @@ function Home() {
                                 </button>
                             ) : (
                                 <a
-                                    href={`${import.meta.env.VITE_API_URL}/auth/line/redirect`}
-                                    className="px-6 py-3 bg-[#06C755] text-white rounded-full shadow-lg inline-block"
+                                    href="/login"
+                                    className="px-6 py-3 bg-blue-500 text-white rounded-full shadow-lg inline-block"
                                 >
-                                    LINEでログインして投稿
+                                    ログインして投稿
                                 </a>
                             )}
                         </div>

@@ -52,12 +52,12 @@ function PublicHeader({ onTermsOpen, onPostingGuideOpen }) {
                         </button>
                     </div>
                 ) : (
-                    <a
-                        href={`${import.meta.env.VITE_API_URL}/auth/line/redirect`}
-                        className="px-3 py-1.5 bg-[#06C755] hover:bg-[#05b04c] text-white text-sm font-medium rounded transition-colors"
+                    <HeaderButtonLink
+                        to="/login"
+                        className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded transition-colors"
                     >
-                        LINEでログイン
-                    </a>
+                        ログイン
+                    </HeaderButtonLink>
                 )}
             </div>
 
@@ -100,12 +100,12 @@ function PublicHeader({ onTermsOpen, onPostingGuideOpen }) {
                                     </button>
                                 </>
                             ) : (
-                                <a
-                                    href={`${import.meta.env.VITE_API_URL}/auth/line/redirect`}
-                                    className="block px-4 py-2 text-sm text-[#06C755] font-medium hover:bg-gray-200"
+                                <HeaderButtonLink
+                                    to="/login"
+                                    className="block px-4 py-2 text-sm text-blue-500 font-medium hover:bg-gray-200"
                                 >
-                                    LINEでログイン
-                                </a>
+                                    ログイン
+                                </HeaderButtonLink>
                             )}
                         </div>
                     </div>
