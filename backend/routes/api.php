@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/sightings', [SightingController::class, 'index']);
 
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('web')->group(function () {
