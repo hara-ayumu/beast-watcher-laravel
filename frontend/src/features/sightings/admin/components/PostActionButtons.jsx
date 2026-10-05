@@ -58,7 +58,7 @@ function PostActionButtons({ status, onApprove, onReject, onEdit }) {
     };
 
     return (
-        <div className="flex gap-2 justify-center">
+        <div className="flex gap-2 justify-center whitespace-nowrap">
             {getButtons().map((btn, i) => (
                 <button
                     key={i}

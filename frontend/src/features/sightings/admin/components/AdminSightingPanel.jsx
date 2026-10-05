@@ -136,8 +136,14 @@ function AdminSightingPanel() {
     const columns = [
         { accessorKey: 'animal_type_id', header: '種類', cell: (info) => info.row.original.animal_type_name },
         { accessorKey: 'sighted_at', header: '目撃日時', cell: (info) => info.getValue() ? new Date(info.getValue()).toLocaleString() : '' },
-        { accessorKey: 'note', header: '詳細' },
-        { accessorKey: 'review_comment', header: '判定理由' },
+        { accessorKey: 'note', header: '詳細', meta: { truncate: true } },
+        { accessorKey: 'review_comment', header: '判定理由', meta: { truncate: true } },
+        { accessorKey: 'reviewed_by', header: '判定者', cell: (info) => info.row.original.reviewer?.name ?? '' },
+        { accessorKey: 'reviewed_at', header: '判定日時', cell: (info) => info.getValue() ? new Date(info.getValue()).toLocaleString() : '' },
+        { accessorKey: 'created_by', header: '投稿者', cell: (info) => info.row.original.creator?.name ?? '' },
+        { accessorKey: 'created_at', header: '作成日時', cell: (info) => info.getValue() ? new Date(info.getValue()).toLocaleString() : '' },
+        { accessorKey: 'updated_by', header: '更新者', cell: (info) => info.row.original.updater?.name ?? '' },
+        { accessorKey: 'updated_at', header: '更新日時', cell: (info) => info.getValue() ? new Date(info.getValue()).toLocaleString() : '' },
     ];
 
     useEffect(() => {

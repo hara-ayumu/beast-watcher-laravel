@@ -46,9 +46,9 @@ class SightingController extends Controller
      */
     public function adminIndex()
     {
-        $sightings = Sighting::with(['animalType', 'reviewer'])
-            ->orderByDesc('sighted_at')
-            ->get();
+        $sightings = Sighting::with(['animalType', 'creator', 'reviewer', 'updater'])
+        ->orderByDesc('sighted_at')
+        ->get();
 
         return response()->json($sightings);
     }
@@ -58,9 +58,11 @@ class SightingController extends Controller
      */
     public function update(UpdateSightingRequest $request, Sighting $sighting)
     {
-        $sighting->update($request->validated());
+        $sighting->update(array_merge($request->validated(), [
+            'updated_by' => $request->user()->id,
+        ]));
 
-        $sighting->load('animalType');
+        $sighting->load('animalType', 'updater');
 
         return response()->json($sighting);
     }

@@ -56,13 +56,13 @@ export const useAdminSightings = () => {
         setError(null);
 
         try {
-            await reviewSighting(id, {
+            const updated = await reviewSighting(id, {
                 status,
                 review_comment: reviewComment,
             });
             setPosts((prev) => 
                 prev.map((p) =>
-                    p.id === id ? { ...p, status, review_comment: reviewComment  } : p
+                    p.id === id ? { ...updated } : p
                 )
             );
             return { success: true };

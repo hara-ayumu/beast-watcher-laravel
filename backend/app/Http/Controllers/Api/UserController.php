@@ -19,6 +19,7 @@ class UserController extends Controller
             'line_name',
             'role',
             'created_at',
+            'updated_at',
         ]);
 
         return response()->json($users);

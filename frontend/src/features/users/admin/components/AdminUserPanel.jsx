@@ -15,11 +15,8 @@ function AdminUserPanel() {
         { accessorKey: 'email', header: 'メール' },
         { accessorKey: 'line_name', header: 'LINE名' },
         { accessorKey: 'role', header: '権限' },
-        {
-            accessorKey: 'created_at',
-            header: '登録日',
-            cell: (info) => info.getValue() ? new Date(info.getValue()).toLocaleDateString() : '',
-        },
+        { accessorKey: 'created_at', header: '登録日時', cell: (info) => info.getValue() ? new Date(info.getValue()).toLocaleString() : '' },
+        { accessorKey: 'updated_at', header: '更新日時', cell: (info) => info.getValue() ? new Date(info.getValue()).toLocaleString() : '' },
     ];
 
     return (
