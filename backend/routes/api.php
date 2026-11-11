@@ -28,5 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/admin/sightings/{sighting}/review', [SightingController::class, 'review']);
 
         Route::get('/admin/users', [UserController::class, 'index']);
+        Route::post('/admin/users', [UserController::class, 'store']);
+        Route::patch('/admin/users/{user}/role', [UserController::class, 'updateRole']);
     });
 });
