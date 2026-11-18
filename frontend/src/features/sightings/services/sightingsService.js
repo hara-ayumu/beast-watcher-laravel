@@ -2,7 +2,7 @@ import api from '../../utils/api';
 
 import { ServiceError } from '../../../errors/ServiceError';
 
-import { ERROR_CODES } from '../constants/errorCodes';
+import { ERROR_CODES } from '../../utils/constants/errorCodes';
 
 /**
  * 投稿者用: 新規投稿（ステータスは必ず未承認）

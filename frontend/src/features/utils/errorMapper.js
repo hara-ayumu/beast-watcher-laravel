@@ -1,7 +1,7 @@
 import { ValidationError, ServiceError } from '../../errors';
 
-import { ERROR_CODES } from '../sightings/constants/errorCodes';
-import { ERROR_MESSAGES } from '../sightings/constants/errorMessages';
+import { ERROR_CODES } from './constants/errorCodes';
+import { ERROR_MESSAGES } from './constants/errorMessages';
 
 /**
  * API エラーレスポンスからメッセージを取得

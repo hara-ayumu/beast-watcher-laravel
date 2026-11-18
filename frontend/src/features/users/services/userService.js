@@ -1,12 +1,22 @@
 import api from '../../utils/api';
 
+import { ServiceError } from '../../../errors/ServiceError';
+
+import { ERROR_CODES } from '../../utils/constants/errorCodes';
+
 /**
  * 管理者用: ユーザー一覧を取得
  * @returns {Promise<Object[]>}
  */
 export const fetchUsers = async () => {
-    const response = await api.get('/admin/users');
-    return response.data;
+    try {
+        const response = await api.get('/admin/users');
+        return response.data;
+    } catch (err) {
+        throw new ServiceError(ERROR_CODES.FETCH_USERS_FAILED, err, {
+            operation: 'fetchUsers',
+        });
+    }
 };
 
 /**
@@ -16,8 +26,16 @@ export const fetchUsers = async () => {
  * @returns {Promise<Object>}
  */
 export const updateUserRole = async (userId, role) => {
-    const response = await api.patch(`/admin/users/${userId}/role`, { role });
-    return response.data;
+    try {
+        const response = await api.patch(`/admin/users/${userId}/role`, { role });
+        return response.data;
+    } catch (err) {
+        throw new ServiceError(ERROR_CODES.UPDATE_ROLE_FAILED, err, {
+            operation: 'updateUserRole',
+            userId,
+            role,
+        });
+    }
 };
 
 /**
@@ -26,6 +44,13 @@ export const updateUserRole = async (userId, role) => {
  * @returns {Promise<Object>}
  */
 export const createAdminUser = async (data) => {
-    const response = await api.post('/admin/users', data);
-    return response.data;
+    try {
+        const response = await api.post('/admin/users', data);
+        return response.data;
+    } catch (err) {
+        throw new ServiceError(ERROR_CODES.CREATE_ADMIN_USER_FAILED, err, {
+            operation: 'createAdminUser',
+            email: data.email,
+        });
+    }
 };

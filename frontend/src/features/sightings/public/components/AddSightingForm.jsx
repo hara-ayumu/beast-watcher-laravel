@@ -10,8 +10,8 @@ import { validateForCreate } from '../../validation/validateSighting';
 
 import { VALIDATION_CONSTANTS } from '../../constants/validationConstants';
 import { SIGHTING_TYPE_OPTIONS } from '../../constants/sightingTypes';
-import { ERROR_MESSAGES } from '../../constants/errorMessages';
-import { ERROR_CODES } from '../../constants/errorCodes';
+import { ERROR_MESSAGES } from '../../../utils/constants/errorMessages';
+import { ERROR_CODES } from '../../../utils/constants/errorCodes';
 
 /**
  * 目撃情報投稿フォーム

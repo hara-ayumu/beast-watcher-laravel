@@ -15,8 +15,8 @@ import { useAdminSightings } from '../hooks/useAdminSightings';
 
 import { DEFAULT_MAP_CENTER } from '../../constants/mapConstants';
 import { SIGHTING_STATUS } from '../../constants/sightingStatus';
-import { ERROR_MESSAGES } from '../../constants/errorMessages';
-import { ERROR_CODES } from '../../constants/errorCodes';
+import { ERROR_MESSAGES } from '../../../utils/constants/errorMessages';
+import { ERROR_CODES } from '../../../utils/constants/errorCodes';
 
 /**
  * 管理者用投稿管理パネル

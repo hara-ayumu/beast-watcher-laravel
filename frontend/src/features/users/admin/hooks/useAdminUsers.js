@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetchUsers, updateUserRole, createAdminUser } from '../../services/userService';
+import { mapErrorToUiMessage } from '../../../utils/errorMapper';
 
 /**
  * 管理者画面用のユーザー管理フック
@@ -18,8 +19,8 @@ export const useAdminUsers = () => {
         try {
             const data = await fetchUsers();
             setUsers(data);
-        } catch {
-            setError('ユーザー情報の取得に失敗しました。');
+        } catch (err) {
+            setError(mapErrorToUiMessage(err));
         } finally {
             setLoading(false);
         }
@@ -32,7 +33,7 @@ export const useAdminUsers = () => {
             setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
             return { success: true };
         } catch (err) {
-            const message = err.response?.data?.message || '権限の変更に失敗しました。もう一度お試しください。';
+            const message = mapErrorToUiMessage(err);
             return { success: false, error: message };
         } finally {
             setUpdating(false);
@@ -46,10 +47,11 @@ export const useAdminUsers = () => {
             setUsers(prev => [newUser, ...prev]);
             return { success: true };
         } catch (err) {
-            if (err.response?.status === 422 && err.response?.data?.errors) {
-                return { success: false, validationErrors: err.response.data.errors };
+            const originalError = err.originalError || err;
+            if (originalError.response?.status === 422 && originalError.response?.data?.errors) {
+                return { success: false, validationErrors: originalError.response.data.errors };
             }
-            return { success: false, error: '管理者アカウントの作成に失敗しました。もう一度お試しください。' };
+            return { success: false, error: mapErrorToUiMessage(err) };
         } finally {
             setUpdating(false);
         }
